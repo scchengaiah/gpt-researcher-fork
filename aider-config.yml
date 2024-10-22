@@ -2,7 +2,7 @@
 model: azure/gpt-4o
 
 # https://aider.chat/docs/more/edit-formats.html
-edit-format: diff
+edit-format: whole
 
 # https://aider.chat/docs/usage/modes.html
 # https://aider.chat/docs/usage/commands.html
@@ -11,7 +11,7 @@ chat-mode: code
 # https://aider.chat/docs/usage/modes.html#architect-mode-and-the-editor-model
 architect: false
 # https://aider.chat/docs/more/edit-formats.html#editor-diff-and-editor-whole
-editor-edit-format: editor-diff
+editor-edit-format: editor-whole
 
 # Git settings
 auto-commits: false

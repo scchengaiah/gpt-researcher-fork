@@ -1,8 +1,7 @@
 from langchain_community.vectorstores import FAISS
 import os
 
-OPENAI_EMBEDDING_MODEL = os.environ.get("OPENAI_EMBEDDING_MODEL","text-embedding-3-small")
-
+OPENAI_EMBEDDING_MODEL = os.environ.get("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
 
 class Memory:
     def __init__(self, embedding_provider, headers=None, **kwargs):
@@ -50,7 +49,13 @@ class Memory:
                 _embeddings = HuggingFaceEmbeddings(
                     model_name="sentence-transformers/all-MiniLM-L6-v2"
                 )
+            case "bedrock":
+                from langchain_community.embeddings import BedrockEmbeddings
 
+                _embeddings = BedrockEmbeddings(
+                    region_name=os.environ.get("AWS_BEDROCK_REGION", "us-east-1"),
+                    model_id = os.environ.get("AWS_BEDROCK_EMBEDDING_MODEL", "amazon.titan-embed-text-v1")
+                )
             case _:
                 raise Exception("Embedding provider not found.")
 
