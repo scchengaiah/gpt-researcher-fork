@@ -105,7 +105,7 @@ You can use the provided Python script to start both the backend and frontend se
 
 3. The services will start, and you can access the application at `http://localhost:3000`.
 
-4. To stop the services, press `CTRL+C`.
+4. To stop the services, press `CTRL+C`. Note that in normal command line terminal and VS code terminal the main program can be terminated. If we use Windows latest terminal this is not working. Use VS code terminal if you want to preserve the UTF-8 content formatting.
 
 ## Setup Docker
 
