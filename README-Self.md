@@ -1,3 +1,14 @@
+- [GPTResearcher](#gptresearcher)
+  - [Setup - Standalone Static Frontend](#setup---standalone-static-frontend)
+  - [Setup - Running NextJS Frontend via CLI](#setup---running-nextjs-frontend-via-cli)
+    - [Prerequisites](#prerequisites)
+    - [Setup and Running](#setup-and-running)
+  - [Running Backend and Frontend Together](#running-backend-and-frontend-together)
+    - [Prerequisites](#prerequisites-1)
+    - [Running the Script](#running-the-script)
+  - [Setup Docker](#setup-docker)
+
+
 # GPTResearcher
 
 ## Setup - Standalone Static Frontend
@@ -34,9 +45,67 @@ python -m uvicorn main:app
 
 ## Setup - Running NextJS Frontend via CLI
 
-Make sure that the steps defined in the [Setup - Standalone Static Frontend](#setup---standalone-static-frontend) are completed.
+A more robust solution with enhanced features and performance.
 
+### Prerequisites
 
+- Node.js (v18.17.0 recommended)
+- npm
+
+### Setup and Running
+
+1. Navigate to the NextJS directory:
+
+    ```bash
+    cd frontend/nextjs
+    ```
+
+2. Set up Node.js:
+
+    ```bash
+    nvm install 18.17.0
+    nvm use 18.17.0
+    ```
+
+3. Install dependencies:
+
+    ```bash
+    npm install --legacy-peer-deps
+    ```
+
+    This command installs dependencies while ignoring peer dependency conflicts.
+
+4. Start the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+5. Access the application at `http://localhost:3000`
+
+Note: Requires the backend server to be running on `localhost:8000` as detailed in the standalone static frontend setup.
+
+## Running Backend and Frontend Together
+
+You can use the provided Python script to start both the backend and frontend services together.
+
+### Prerequisites
+
+- Ensure all dependencies for both backend and frontend are installed as per the above instructions.
+
+### Running the Script
+
+1. Navigate to the directory containing `start_services.py`.
+
+2. Run the script:
+
+    ```bash
+    python start_services.py
+    ```
+
+3. The services will start, and you can access the application at `http://localhost:3000`.
+
+4. To stop the services, press `CTRL+C`.
 
 ## Setup Docker
 
