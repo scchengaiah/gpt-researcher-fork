@@ -89,6 +89,8 @@ Note: Requires the backend server to be running on `localhost:8000` as detailed 
 
 You can use the provided Python script to start both the backend and frontend services together.
 
+> Use this preferably in Linux to avoid font config error. Also, we can just run the backend alone with static resources if used in Linux.
+
 ### Prerequisites
 
 - Ensure all dependencies for both backend and frontend are installed as per the above instructions.

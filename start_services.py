@@ -5,8 +5,27 @@ import sys
 import psutil
 import signal
 import threading
+import shutil
+import socket
+
+# Configuration
+CONDA_ENV_NAME = "gptr"  # Change this to your conda environment name
+BACKEND_PORT = 8000  # Default port for uvicorn
+FRONTEND_PORT = 3000  # Default port for Next.js
+START_FRONTEND = False  # Set to False if you don't want to start the frontend
+
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception:
+        return "127.0.0.1"  # Fallback to localhost if unable to determine IP
 
 def start_process(command, cwd=None):
+    print(f"Starting process with command: {command}")
     return subprocess.Popen(
         command,
         shell=True,
@@ -18,19 +37,36 @@ def start_process(command, cwd=None):
         encoding='utf-8'
     )
 
-def print_output(process):
-    for line in iter(process.stdout.readline, ''):
-        sys.stdout.write(line)
-        sys.stdout.flush()
-    process.stdout.close()
+def print_output(process, name):
+    print(f"Starting to read output for {name}")
+    try:
+        for line in iter(process.stdout.readline, ''):
+            sys.stdout.write(f"{name}: {line}")
+            sys.stdout.flush()
+    except Exception as e:
+        print(f"Error reading output from {name}: {e}")
+    finally:
+        print(f"Finished reading output for {name}")
+        process.stdout.close()
+
+def get_backend_command():
+    if shutil.which('conda'):
+        return f"conda run --no-capture-output -n {CONDA_ENV_NAME} python -m uvicorn main:app --host 0.0.0.0 --port {BACKEND_PORT}"
+    else:
+        print("Warning: conda not found. Trying to run without conda activation.")
+        return f"python -m uvicorn main:app --host 0.0.0.0 --port {BACKEND_PORT}"
 
 # Start the backend server
-backend_process = start_process("conda activate gptr && python -m uvicorn main:app")
+backend_command = get_backend_command()
+print(f"Backend command: {backend_command}")
+backend_process = start_process(backend_command)
 
-# Start the frontend server
-frontend_process = start_process("npm run dev", cwd="frontend/nextjs")
+processes = [("Backend", backend_process)]
 
-processes = [backend_process, frontend_process]
+# Start the frontend server if START_FRONTEND is True
+if START_FRONTEND:
+    frontend_process = start_process(f"npm run dev -- -p {FRONTEND_PORT}", cwd="frontend/nextjs")
+    processes.append(("Frontend", frontend_process))
 
 def terminate_process(process):
     if process.poll() is None:
@@ -49,7 +85,7 @@ def terminate_process(process):
 def terminate_processes(signum, frame):
     print("\nStopping services...")
     try:
-        for process in processes:
+        for _, process in processes:
             terminate_process(process)
         print("Services stopped.")
     except Exception as e:
@@ -62,12 +98,18 @@ signal.signal(signal.SIGINT, terminate_processes)
 signal.signal(signal.SIGTERM, terminate_processes)
 
 try:
+    local_ip = get_local_ip()
     print("Services are running. Press CTRL+C to stop.")
+    print(f"Backend service is accessible at: http://{local_ip}:{BACKEND_PORT}")
+    if START_FRONTEND:
+        print(f"Frontend service is accessible at: http://{local_ip}:{FRONTEND_PORT}")
+    else:
+        print("Frontend service is not started.")
     
     # Start output threads
     threads = []
-    for process in processes:
-        thread = threading.Thread(target=print_output, args=(process,), daemon=True)
+    for name, process in processes:
+        thread = threading.Thread(target=print_output, args=(process, name), daemon=True)
         thread.start()
         threads.append(thread)
     

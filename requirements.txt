@@ -30,6 +30,7 @@ unstructured
 json_repair
 json5
 loguru
+duckduckgo-search
 
 # uncomment for testing
 # pytest
