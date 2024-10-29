@@ -7,9 +7,9 @@ import signal
 import threading
 import shutil
 import socket
+import argparse
 
 # Configuration
-CONDA_ENV_NAME = "gptr"  # Change this to your conda environment name
 BACKEND_PORT = 8000  # Default port for uvicorn
 FRONTEND_PORT = 3000  # Default port for Next.js
 START_FRONTEND = False  # Set to False if you don't want to start the frontend
@@ -49,24 +49,12 @@ def print_output(process, name):
         print(f"Finished reading output for {name}")
         process.stdout.close()
 
-def get_backend_command():
+def get_backend_command(conda_env_name):
     if shutil.which('conda'):
-        return f"conda run --no-capture-output -n {CONDA_ENV_NAME} python -m uvicorn main:app --host 0.0.0.0 --port {BACKEND_PORT}"
+        return f"conda run --no-capture-output -n {conda_env_name} python -m uvicorn main:app --host 0.0.0.0 --port {BACKEND_PORT}"
     else:
         print("Warning: conda not found. Trying to run without conda activation.")
         return f"python -m uvicorn main:app --host 0.0.0.0 --port {BACKEND_PORT}"
-
-# Start the backend server
-backend_command = get_backend_command()
-print(f"Backend command: {backend_command}")
-backend_process = start_process(backend_command)
-
-processes = [("Backend", backend_process)]
-
-# Start the frontend server if START_FRONTEND is True
-if START_FRONTEND:
-    frontend_process = start_process(f"npm run dev -- -p {FRONTEND_PORT}", cwd="frontend/nextjs")
-    processes.append(("Frontend", frontend_process))
 
 def terminate_process(process):
     if process.poll() is None:
@@ -97,26 +85,48 @@ def terminate_processes(signum, frame):
 signal.signal(signal.SIGINT, terminate_processes)
 signal.signal(signal.SIGTERM, terminate_processes)
 
-try:
-    local_ip = get_local_ip()
-    print("Services are running. Press CTRL+C to stop.")
-    print(f"Backend service is accessible at: http://{local_ip}:{BACKEND_PORT}")
-    if START_FRONTEND:
-        print(f"Frontend service is accessible at: http://{local_ip}:{FRONTEND_PORT}")
-    else:
-        print("Frontend service is not started.")
-    
-    # Start output threads
-    threads = []
-    for name, process in processes:
-        thread = threading.Thread(target=print_output, args=(process, name), daemon=True)
-        thread.start()
-        threads.append(thread)
-    
-    # Wait for all threads to complete
-    for thread in threads:
-        thread.join()
+def main():
+    parser = argparse.ArgumentParser(description='Start services with specified Conda environment.')
+    parser.add_argument('conda_env_name', type=str, help='Name of the Conda environment to use')
+    args = parser.parse_args()
 
-except Exception as e:
-    print(f"An error occurred: {e}")
-    terminate_processes(None, None)
+    conda_env_name = args.conda_env_name
+
+    # Start the backend server
+    backend_command = get_backend_command(conda_env_name)
+    print(f"Backend command: {backend_command}")
+    backend_process = start_process(backend_command)
+
+    processes = [("Backend", backend_process)]
+
+    # Start the frontend server if START_FRONTEND is True
+    if START_FRONTEND:
+        frontend_process = start_process(f"npm run dev -- -p {FRONTEND_PORT}", cwd="frontend/nextjs")
+        processes.append(("Frontend", frontend_process))
+
+    try:
+        local_ip = get_local_ip()
+        print("Services are running. Press CTRL+C to stop.")
+        print(f"Backend service is accessible at: http://{local_ip}:{BACKEND_PORT}")
+        if START_FRONTEND:
+            print(f"Frontend service is accessible at: http://{local_ip}:{FRONTEND_PORT}")
+        else:
+            print("Frontend service is not started.")
+        
+        # Start output threads
+        threads = []
+        for name, process in processes:
+            thread = threading.Thread(target=print_output, args=(process, name), daemon=True)
+            thread.start()
+            threads.append(thread)
+        
+        # Wait for all threads to complete
+        for thread in threads:
+            thread.join()
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        terminate_processes(None, None)
+
+if __name__ == "__main__":
+    main()
