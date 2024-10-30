@@ -72,6 +72,8 @@ class Config:
                     self.embedding_model = os.environ["AZURE_EMBEDDING_MODEL"]
                 case "huggingface":
                     self.embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
+                case "bedrock":
+                    self.embedding_model = os.environ["BEDROCK_EMBEDDING_MODEL"]
                 case _:
                     raise Exception("Embedding provider not found.")
 

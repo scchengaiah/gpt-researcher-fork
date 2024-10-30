@@ -96,7 +96,7 @@ class GenericLLMProvider:
             llm = ChatGroq(**kwargs)
         elif provider == "bedrock":
             _check_pkg("langchain_aws")
-            from langchain_aws import ChatBedrock
+            from langchain_aws.chat_models.bedrock import ChatBedrock
 
             if "model" in kwargs or "model_name" in kwargs:
                 model_id = kwargs.pop("model", None) or kwargs.pop("model_name", None)

@@ -17,6 +17,7 @@ source activate "$CONDA_ENV_NAME"
 # Use pip to install all dependencies
 echo "Installing all dependencies with pip."
 pip install -r requirements.txt
+pip install -r requirements-local.txt
 
 # Run the start_services.py script
 echo "Starting services..."
