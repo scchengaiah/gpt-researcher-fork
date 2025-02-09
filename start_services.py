@@ -12,7 +12,7 @@ import argparse
 # Configuration
 BACKEND_PORT = 8000  # Default port for uvicorn
 FRONTEND_PORT = 3000  # Default port for Next.js
-START_FRONTEND = True  # Set to False if you don't want to start the frontend
+START_FRONTEND = False  # Set to False if you don't want to start the frontend
 
 def get_local_ip():
     try:
