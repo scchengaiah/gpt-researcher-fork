@@ -1,10 +1,11 @@
 import json
 import os
 import warnings
-from typing import Dict, Any, List, Union, Type, get_origin, get_args
-from .variables.default import DEFAULT_CONFIG
-from .variables.base import BaseConfig
+from typing import Any, Dict, List, Type, Union, get_args, get_origin
+
 from ..retrievers.utils import get_all_retriever_names
+from .variables.base import BaseConfig
+from .variables.default import DEFAULT_CONFIG
 
 
 class Config:
@@ -29,7 +30,9 @@ class Config:
         for key, value in config.items():
             env_value = os.getenv(key)
             if env_value is not None:
-                value = self.convert_env_value(key, env_value, BaseConfig.__annotations__[key])
+                value = self.convert_env_value(
+                    key, env_value, BaseConfig.__annotations__[key]
+                )
             setattr(self, key.lower(), value)
 
         # Handle RETRIEVER with default value
@@ -48,7 +51,9 @@ class Config:
     def _set_llm_attributes(self) -> None:
         self.fast_llm_provider, self.fast_llm_model = self.parse_llm(self.fast_llm)
         self.smart_llm_provider, self.smart_llm_model = self.parse_llm(self.smart_llm)
-        self.strategic_llm_provider, self.strategic_llm_model = self.parse_llm(self.strategic_llm)
+        self.strategic_llm_provider, self.strategic_llm_model = self.parse_llm(
+            self.strategic_llm
+        )
 
     def _handle_deprecated_attributes(self) -> None:
         if os.getenv("EMBEDDING_PROVIDER") is not None:
@@ -72,8 +77,8 @@ class Config:
                     self.embedding_model = "text-embedding-3-large"
                 case "huggingface":
                     self.embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
-                case "bedrock":
-                    self.embedding_model = os.environ["BEDROCK_EMBEDDING_MODEL"]
+                case "google_genai":
+                    self.embedding_model = "text-embedding-004"
                 case _:
                     raise Exception("Embedding provider not found.")
 
@@ -95,15 +100,17 @@ class Config:
         if os.getenv("SMART_LLM_MODEL") is not None:
             warnings.warn(_deprecation_warning, FutureWarning, stacklevel=2)
             self.smart_llm_model = os.environ["SMART_LLM_MODEL"] or self.smart_llm_model
-        
+
     def _set_doc_path(self, config: Dict[str, Any]) -> None:
-        self.doc_path = config['DOC_PATH']
+        self.doc_path = config["DOC_PATH"]
         if self.doc_path:
             try:
                 self.validate_doc_path()
             except Exception as e:
-                print(f"Warning: Error validating doc_path: {str(e)}. Using default doc_path.")
-                self.doc_path = DEFAULT_CONFIG['DOC_PATH']
+                print(
+                    f"Warning: Error validating doc_path: {str(e)}. Using default doc_path."
+                )
+                self.doc_path = DEFAULT_CONFIG["DOC_PATH"]
 
     @classmethod
     def load_config(cls, config_path: str | None) -> Dict[str, Any]:
@@ -114,7 +121,9 @@ class Config:
         # config_path = os.path.join(cls.CONFIG_DIR, config_path)
         if not os.path.exists(config_path):
             if config_path and config_path != "default":
-                print(f"Warning: Configuration not found at '{config_path}'. Using default configuration.")
+                print(
+                    f"Warning: Configuration not found at '{config_path}'. Using default configuration."
+                )
                 if not config_path.endswith(".json"):
                     print(f"Do you mean '{config_path}.json'?")
             return DEFAULT_CONFIG
@@ -138,8 +147,7 @@ class Config:
 
     def parse_retrievers(self, retriever_str: str) -> List[str]:
         """Parse the retriever string into a list of retrievers and validate them."""
-        retrievers = [retriever.strip()
-                      for retriever in retriever_str.split(",")]
+        retrievers = [retriever.strip() for retriever in retriever_str.split(",")]
         valid_retrievers = get_all_retriever_names() or []
         invalid_retrievers = [r for r in retrievers if r not in valid_retrievers]
         if invalid_retrievers:
