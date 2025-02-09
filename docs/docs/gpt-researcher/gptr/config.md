@@ -23,8 +23,11 @@ Below is a list of current supported options:
 - **`FAST_LLM`**: Model name for fast LLM operations such summaries. Defaults to `openai:gpt-4o-mini`.
 - **`SMART_LLM`**: Model name for smart operations like generating research reports and reasoning. Defaults to `openai:gpt-4o`.
 - **`STRATEGIC_LLM`**: Model name for strategic operations like generating research plans and strategies. Defaults to `openai:o1-preview`.
+- **`LANGUAGE`**: Language to be used for the final research report. Defaults to `english`.
+- **`CURATE_SOURCES`**: Whether to curate sources for research. This step adds an LLM run which may increase costs and total run time but improves quality of source selection. Defaults to `True`.
 - **`FAST_TOKEN_LIMIT`**: Maximum token limit for fast LLM responses. Defaults to `2000`.
 - **`SMART_TOKEN_LIMIT`**: Maximum token limit for smart LLM responses. Defaults to `4000`.
+- **`STRATEGIC_TOKEN_LIMIT`**: Maximum token limit for strategic LLM responses. Defaults to `4000`.
 - **`BROWSE_CHUNK_MAX_LENGTH`**: Maximum length of text chunks to browse in web sources. Defaults to `8192`.
 - **`SUMMARY_TOKEN_LIMIT`**: Maximum token limit for generating summaries. Defaults to `700`.
 - **`TEMPERATURE`**: Sampling temperature for LLM responses, typically between 0 and 1. A higher value results in more randomness and creativity, while a lower value results in more focused and deterministic responses. Defaults to `0.55`.
@@ -50,28 +53,3 @@ To learn more about additional LLM support you can check out the docs [here](/do
 
 You can also include your own external JSON file `config.json` by adding the path in the `config_file` param.
 
-## Example: Azure OpenAI Configuration
-
-If you are not using OpenAI's models, but other model providers, besides the general configuration above, also additional environment variables are required.
-Check the [langchain documentation](https://python.langchain.com/v0.2/docs/integrations/platforms/) about your model for the exact configuration of the API keys and endpoints.
-
-Here is an example for [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models) configuration:
-
-```bash
-
-OPENAI_API_VERSION="2024-05-01-preview" # or whatever you are using
-AZURE_OPENAI_ENDPOINT="https://CHANGEMEN.openai.azure.com/" # change to the name of your deployment
-AZURE_OPENAI_API_KEY="[Your Key]" # change to your API key
-
-EMBEDDING="azure_openai:text-embedding-ada-002" # change to the deployment of your embedding model
-
-FAST_LLM="azure_openai:gpt-4o-mini" # change to the name of your deployment (not model-name)
-FAST_TOKEN_LIMIT=4000
-
-SMART_LLM="azure_openai:gpt-4o" # change to the name of your deployment (not model-name)
-SMART_TOKEN_LIMIT=4000
-
-RETRIEVER="bing" # if you are using Bing as your search engine (which is likely if you use Azure)
-BING_API_KEY="[Your Key]"
-
-```

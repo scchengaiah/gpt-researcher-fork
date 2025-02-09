@@ -15,6 +15,25 @@ from backend.server.server_utils import (
     execute_multi_agents, handle_websocket_communication
 )
 
+
+from gpt_researcher.utils.logging_config import setup_research_logging
+
+import logging
+
+# Get logger instance
+logger = logging.getLogger(__name__)
+
+# Don't override parent logger settings
+logger.propagate = True
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler()  # Only log to console
+    ]
+)
+
 # Models
 
 
@@ -39,6 +58,8 @@ class ConfigRequest(BaseModel):
     SERPAPI_API_KEY: str = ''
     SERPER_API_KEY: str = ''
     SEARX_URL: str = ''
+    XAI_API_KEY: str
+    DEEPSEEK_API_KEY: str
 
 
 # App initialization
@@ -72,6 +93,7 @@ def startup_event():
     os.makedirs("outputs", exist_ok=True)
     app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
     os.makedirs(DOC_PATH, exist_ok=True)
+    
 
 # Routes
 

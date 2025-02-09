@@ -18,9 +18,9 @@ _SUPPORTED_PROVIDERS = {
     "huggingface",
     "nomic",
     "voyageai",
+    "dashscope",
     "custom",
     "bedrock",
-    "cohere"
 }
 
 
@@ -104,17 +104,14 @@ class Memory:
                     model=model,
                     **embdding_kwargs,
                 )
+            case "dashscope":
+                from langchain_community.embeddings import DashScopeEmbeddings
+
+                _embeddings = DashScopeEmbeddings(model=model, **embdding_kwargs)
             case "bedrock":
-                from langchain_aws.embeddings.bedrock import BedrockEmbeddings
+                from langchain_aws.embeddings import BedrockEmbeddings
 
-                _embeddings = BedrockEmbeddings(
-                    region_name=os.environ.get("AWS_BEDROCK_REGION", "us-east-1"),
-                    model_id=model
-                )
-            case "cohere":
-                from langchain_cohere.embeddings import CohereEmbeddings
-
-                _embeddings = CohereEmbeddings(model=model)
+                _embeddings = BedrockEmbeddings(model_id=model, **embdding_kwargs)
             case _:
                 raise Exception("Embedding not found.")
 

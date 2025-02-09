@@ -13,6 +13,7 @@ interface ResearchResultsProps {
   orderedData: Data[];
   answer: string;
   allLogs: any[];
+  chatBoxSettings: any;
   handleClickSuggestion: (value: string) => void;
 }
 
@@ -20,6 +21,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({
   orderedData,
   answer,
   allLogs,
+  chatBoxSettings,
   handleClickSuggestion
 }) => {
   const groupedData = preprocessOrderedData(orderedData);
@@ -61,6 +63,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({
 
   return (
     <>
+      {orderedData.length > 0 && <LogsSection logs={allLogs} />}
       {initialQuestion && <Question question={initialQuestion.content} />}
       {subqueriesComponent && (
         <SubQuestions
@@ -68,11 +71,10 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({
           handleClickSuggestion={handleClickSuggestion}
         />
       )}
-      {orderedData.length > 0 && <LogsSection logs={allLogs} />}
       {sourceComponents}
       {imageComponents}
       {finalReport && <Answer answer={finalReport.content} />}
-      {pathData && <AccessReport accessData={pathData.output} report={answer} />}
+      {pathData && <AccessReport accessData={pathData.output} report={answer} chatBoxSettings={chatBoxSettings} />}
       {chatComponents}
     </>
   );

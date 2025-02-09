@@ -20,70 +20,33 @@
 
   /* Paragraphs and spacing */
   p {
-    font-size: 18px;
+    margin: 0;
     line-height: 1.6;
+  }
+
+  /* Text formatting */
+  strong, b {
+    font-weight: 600;
   }
 
   /* Lists */
   ul, ol {
-    margin: 0 0 0 1em;
-    padding: 0;
-  }
-
-  ul {
-    list-style-type: disc;
-  }
-
-  ol {
-    list-style-type: decimal;
+    margin: 0;
+    padding-left: 2em;
+    line-height: 1.6;
   }
 
   li {
-    padding: 0;
-    
-    > ul, > ol {
-      margin: 0 0 0 1.5em;
-    }
-
-    /* Remove the marker styling since we're using grid */
-    &::marker {
-      display: none;
-    }
-
-    /* Add a pseudo-element for the marker */
-    &::before { /* For unordered lists */
-      justify-self: end;
-    }
-
-    /* Updated list item paragraph styling */
-    > p {
-      margin: 0;
-      padding: 0;
-      grid-column: 2;
-    }
+    margin: 0;
+    padding-left: 0.5em;
   }
 
-  /* Numbered lists specific styling */
-  ol {
-    counter-reset: item;
-    list-style-position: outside;
-    
-    > li {
-      counter-increment: item;
-      
-      &::marker {
-        color: white;
-      }
-    }
+  ul li {
+    list-style-type: disc;
   }
 
-  /* Nested lists with proper numbering */
-  ol ol {
-    counter-reset: subitem;
-    
-    > li {
-      counter-increment: subitem;
-    }
+  ol li {
+    list-style-type: decimal;
   }
 
   /* Links */
@@ -143,6 +106,6 @@
   hr {
     border: 0;
     border-top: 1px solid #444;
-    margin: 2em 0;
+    margin: 1em 0;
   }
 } 
