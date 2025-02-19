@@ -1,0 +1,36 @@
+general:
+  instance_name: "my-searxng"
+  debug: false
+
+search:
+  formats:
+    - html
+    - json
+  default_format: html
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  base_url: http://localhost:8080/
+  secret_key: "change_me_to_something_random"
+  limiter: false
+  cors_alloworigin: "*"
+
+engines:
+  - name: google
+    engine: google
+    shortcut: g
+
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: d
+
+doi_resolvers:
+  oadoi.org: "https://oadoi.org/"
+  doi.org: "https://doi.org/"
+  doai.io: "https://dissem.in/"
+  sci-hub.se: "https://sci-hub.se/"
+  sci-hub.st: "https://sci-hub.st/"
+  sci-hub.ru: "https://sci-hub.ru/"
+
+default_doi_resolver: "doi.org"

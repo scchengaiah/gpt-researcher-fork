@@ -78,6 +78,7 @@ class Memory:
                 _embeddings = OllamaEmbeddings(
                     model=model,
                     base_url=os.environ["OLLAMA_BASE_URL"],
+                    client_kwargs={"verify": False},
                     **embdding_kwargs,
                 )
             case "together":

@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./config:/etc/searxng
+    environment:
+      - BASE_URL=http://localhost:8080/
+      - INSTANCE_NAME=my-searxng
+      # Optional environment variables
+      # - UWSGI_WORKERS=4  # Number of uWSGI workers
+      # - UWSGI_THREADS=8  # Number of uWSGI threads
+    restart: unless-stopped
